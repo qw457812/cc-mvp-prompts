@@ -1,6 +1,6 @@
-# Claude Code Version 1.0.7
+# Claude Code Version 1.0.8
 
-Release Date: 2025-05-30
+Release Date: 2025-06-02
 
 # User Message
 
@@ -174,7 +174,7 @@ You MUST answer concisely with fewer than 4 lines of text (not including tool us
 
 Here is useful information about the environment you are running in:
 <env>
-Working directory: /tmp/claude-history-1754179705567-wpwxhz
+Working directory: /tmp/claude-history-1754179711167-lww32s
 Is directory a git repo: No
 Platform: linux
 OS Version: Linux 5.15.0-144-generic
@@ -200,9 +200,9 @@ assistant: Clients are marked as failed in the `connectToServer` function in src
 
 directoryStructure: Below is a snapshot of this project's file structure at the start of the conversation. This snapshot will NOT update during the conversation. It skips over .gitignore patterns.
 
-- /tmp/claude-history-1754179705567-wpwxhz/
+- /tmp/claude-history-1754179711167-lww32s/
   - CLAUDE.md
-  - anthropic-ai-claude-code-1.0.7.tgz
+  - anthropic-ai-claude-code-1.0.8.tgz
   - package/
     - LICENSE.md
     - README.md
@@ -242,7 +242,7 @@ Usage notes:
   - It is very helpful if you write a clear, concise description of what this command does in 5-10 words.
   - If the output exceeds 30000 characters, output will be truncated before being returned to you.
   - VERY IMPORTANT: You MUST avoid using search commands like `find` and `grep`. Instead use Grep, Glob, or Task to search. You MUST avoid read tools like `cat`, `head`, `tail`, and `ls`, and use Read and LS to read files.
-  - If you _still_ need to run `grep`, STOP. ALWAYS USE ripgrep at `rg` (or /tmp/claude-history-1754179705567-wpwxhz/package/vendor/ripgrep/x64-linux/rg) first, which all Claude Code users have pre-installed.
+  - If you _still_ need to run `grep`, STOP. ALWAYS USE ripgrep at `rg` (or /tmp/claude-history-1754179711167-lww32s/package/vendor/ripgrep/x64-linux/rg) first, which all Claude Code users have pre-installed.
   - When issuing multiple commands, use the ';' or '&&' operator to separate them. DO NOT use newlines (newlines are ok in quoted strings).
   - Try to maintain your current working directory throughout the session by using absolute paths and avoiding usage of `cd`. You may use `cd` if the User explicitly requests it.
     <good-example>
@@ -386,12 +386,15 @@ Important:
 
 ## Edit
 
-Performs exact string replacements in files with strict occurrence count validation.
+Performs exact string replacements in files. 
 
 Usage:
+- You must use your `Read` tool at least once in the conversation before editing. This tool will error if you attempt an edit without reading the file. 
 - When editing text from Read tool output, ensure you preserve the exact indentation (tabs/spaces) as it appears AFTER the line number prefix. The line number prefix format is: spaces + line number + tab. Everything after that tab is the actual file content to match. Never include any part of the line number prefix in the old_string or new_string.
 - ALWAYS prefer editing existing files in the codebase. NEVER write new files unless explicitly required.
 - Only use emojis if the user explicitly requests it. Avoid adding emojis to files unless asked.
+- The edit will FAIL if `old_string` is not unique in the file. Either provide a larger string with more surrounding context to make it unique or use `replace_all` to change every instance of `old_string`. 
+- Use `replace_all` for replacing and renaming strings across the file. This parameter is useful if you want to rename a variable for instance.
 {
   "type": "object",
   "properties": {
@@ -407,10 +410,10 @@ Usage:
       "type": "string",
       "description": "The text to replace it with (must be different from old_string)"
     },
-    "expected_replacements": {
-      "type": "number",
-      "default": 1,
-      "description": "The expected number of replacements to perform. Defaults to 1 if not specified."
+    "replace_all": {
+      "type": "boolean",
+      "default": false,
+      "description": "Replace all occurences of old_string (default false)"
     }
   },
   "required": [
@@ -531,7 +534,7 @@ To make multiple file edits, provide the following:
 2. edits: An array of edit operations to perform, where each edit contains:
    - old_string: The text to replace (must match the file contents exactly, including all whitespace and indentation)
    - new_string: The edited text to replace the old_string
-   - expected_replacements: The number of replacements you expect to make. Defaults to 1 if not specified.
+   - replace_all: Replace all occurences of old_string. This parameter is optional and defaults to false.
 
 IMPORTANT:
 - All edits are applied in sequence, in the order they are provided
@@ -546,8 +549,6 @@ CRITICAL REQUIREMENTS:
 3. Plan your edits carefully to avoid conflicts between sequential operations
 
 WARNING:
-- The tool will fail if edits.old_string matches multiple locations and edits.expected_replacements isn't specified
-- The tool will fail if the number of matches doesn't equal edits.expected_replacements when it's specified
 - The tool will fail if edits.old_string doesn't match the file contents exactly (including whitespace)
 - The tool will fail if edits.old_string and edits.new_string are the same
 - Since edits are applied in sequence, ensure that earlier edits don't affect the text that later edits are trying to find
@@ -557,6 +558,7 @@ When making edits:
 - Do not leave the code in a broken state
 - Always use absolute file paths (starting with /)
 - Only use emojis if the user explicitly requests it. Avoid adding emojis to files unless asked.
+- Use replace_all for replacing and renaming strings across the file. This parameter is useful if you want to rename a variable for instance.
 
 If you want to create a new file, use:
 - A new file path, including dir name if needed
@@ -582,10 +584,10 @@ If you want to create a new file, use:
             "type": "string",
             "description": "The text to replace it with"
           },
-          "expected_replacements": {
-            "type": "number",
-            "default": 1,
-            "description": "The expected number of replacements to perform. Defaults to 1 if not specified."
+          "replace_all": {
+            "type": "boolean",
+            "default": false,
+            "description": "Replace all occurences of old_string (default false)."
           }
         },
         "required": [
@@ -806,7 +808,7 @@ Skip using this tool when:
 3. The task can be completed in less than 3 trivial steps
 4. The task is purely conversational or informational
 
-NOTE that you should use should not use this tool if there is only one trivial task to do. In this case you are better off just doing the task directly.
+NOTE that you should not use this tool if there is only one trivial task to do. In this case you are better off just doing the task directly.
 
 #### Examples of When to Use the Todo List
 

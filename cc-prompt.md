@@ -178,11 +178,11 @@ NEVER commit changes unless the user explicitly asks you to. It is VERY IMPORTAN
 
 Here is useful information about the environment you are running in:
 <env>
-Working directory: /private/var/folders/nc/j4jwgm8517z_pm8q9nw5jk9h0000gn/T/claude-history-1754511143815-vh5sv2
+Working directory: /tmp/claude-history-1754668795405-vs04yb
 Is directory a git repo: No
-Platform: darwin
-OS Version: Darwin 24.1.0
-Today's date: 2025-08-06
+Platform: linux
+OS Version: Linux 6.10.14-linuxkit
+Today's date: 2025-08-08
 </env>
 You are powered by the model named Sonnet 4. The exact model ID is claude-sonnet-4-20250514.
 

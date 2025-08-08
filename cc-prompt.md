@@ -178,7 +178,7 @@ NEVER commit changes unless the user explicitly asks you to. It is VERY IMPORTAN
 
 Here is useful information about the environment you are running in:
 <env>
-Working directory: /tmp/claude-history-1754668827873-10xvg9
+Working directory: /tmp/claude-history-1754668802381-sgyaao
 Is directory a git repo: No
 Platform: linux
 OS Version: Linux 6.10.14-linuxkit
